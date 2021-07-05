@@ -76,9 +76,4 @@ const server = new ApolloServer({
   playground: true,
 });
 
-exports.handler = server.createHandler({
-  cors: {
-    origin: '*',
-    credentials: true,
-  },
-});
+exports.handler = server.createHandler();

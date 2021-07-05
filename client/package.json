@@ -19,6 +19,7 @@
     "apollo-datasource-rest": "^0.14.0",
     "apollo-server-lambda": "^2.25.2",
     "date-fns": "^2.22.1",
+    "encoding": "^0.1.13",
     "framer-motion": "^4",
     "graphql": "^15.5.1",
     "netlify-lambda": "^2.0.11",
