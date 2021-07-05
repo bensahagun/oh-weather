@@ -6,7 +6,7 @@ import { ColorModeScript } from '@chakra-ui/react';
 import theme from './theme';
 
 const client = new ApolloClient({
-  uri: process.env.REACT_APP_SERVER_URL,
+  uri: 'http://localhost:9000/.netlify/functions/graphql',
   cache: new InMemoryCache({
     addTypename: false,
   }),
