@@ -1,25 +1,36 @@
 import { IWeather } from './Weather';
 
-const Emoji = ({ weather }: { weather: IWeather }) => {
+const Emoji = ({ weather }: { weather: IWeather }): React.ReactElement => {
+  let emoji = '';
+
   switch (weather?.weather?.main.toLowerCase()) {
     case 'clouds':
-      return <>☁</>;
+      emoji = '☁';
+      break;
     case 'rain':
-      return <>🌧</>;
+      emoji = '🌧';
+      break;
     case 'snow':
-      return <>❄</>;
+      emoji = '❄';
+      break;
     case 'clear':
-      return <>🌞</>;
+      emoji = '🌞';
+      break;
     case 'fog':
     case 'dirzzle':
-      return <>🌫</>;
+      emoji = '🌫';
+      break;
     case 'haze':
     case 'mist':
     case 'smoke':
-      return <>🌥</>;
+      emoji = '🌥';
+      break;
     default:
-      return <>🌈</>;
+      emoji = '🌈';
+      break;
   }
+
+  return <span data-testid='emoji'>{emoji}</span>;
 };
 
 export default Emoji;

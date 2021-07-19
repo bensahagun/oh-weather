@@ -8,7 +8,7 @@ interface IForm {
   setQuery: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const Form = ({ setQuery }: IForm) => {
+const Form = ({ setQuery }: IForm): React.ReactElement => {
   const [input, setInput] = useState('');
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -24,6 +24,7 @@ const Form = ({ setQuery }: IForm) => {
       <InputGroup>
         <InputLeftElement fontSize='1.2em' cursor='pointer' height='100%' children={<MdGpsFixed />} />
         <Input
+          data-testid='searchInput'
           _placeholder={{ color: 'whiteAlpha.500' }}
           backgroundColor='blackAlpha.600'
           placeholder='Type a city and press Enter'
@@ -35,6 +36,7 @@ const Form = ({ setQuery }: IForm) => {
           onKeyDown={handleKeyDown}
         />
         <InputRightElement
+          data-testid='searchSubmit'
           onClick={handleClick}
           fontSize='1.4em'
           cursor='pointer'

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image } from '@chakra-ui/react';
 
-const Badge = () => {
+const Badge = (): React.ReactElement => {
   return (
     <a href='https://github.com/bensahagun/oh-weather/' target='_blank' rel='noreferrer'>
       <Image

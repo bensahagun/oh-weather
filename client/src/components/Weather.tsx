@@ -12,7 +12,7 @@ export interface IWeather {
   country: string;
 }
 
-const Weather = ({ weather }: { weather: IWeather }) => {
+const Weather = ({ weather }: { weather: IWeather }): React.ReactElement => {
   return (
     <Flex flexDirection='column' justifyContent='center' alignItems='center' py={8} px={4} mt={5} borderRadius={10}>
       <Heading as='h2' fontWeight='600' textShadow='2px 2px 2px rgba(0, 0, 0, 0.5);'>

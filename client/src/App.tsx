@@ -19,7 +19,7 @@ interface IWeatherResponse {
   weatherByCity: IWeather;
 }
 
-const GET_WEATHER = gql`
+export const GET_WEATHER = gql`
   query ($city: String!) {
     weatherByCity(city: $city) {
       name
@@ -33,7 +33,7 @@ const GET_WEATHER = gql`
   }
 `;
 
-const App = () => {
+const App = (): React.ReactElement => {
   const [query, setQuery] = useState<string>('');
   const [weather, setWeather] = useState<IWeather>({} as IWeather);
   const [getWeather, { loading, data }] = useLazyQuery<IWeatherResponse>(GET_WEATHER);
@@ -61,6 +61,7 @@ const App = () => {
         <Container>
           <Center mb={6}>
             <Heading
+              data-testid='pageTitle'
               fontWeight='800'
               fontSize={{ base: '4xl', md: '6xl' }}
               textShadow='4px 4px 2px rgba(0, 0, 0, 0.5);'>
@@ -68,7 +69,7 @@ const App = () => {
             </Heading>
           </Center>
           <Form setQuery={setQuery} />
-          <Collapse in={!_.isEmpty(weather) && !loading}>
+          <Collapse data-testid='weather' in={!_.isEmpty(weather) && !loading}>
             {!_.isEmpty(weather) && <Weather weather={weather} />}
           </Collapse>
           <Badge />
