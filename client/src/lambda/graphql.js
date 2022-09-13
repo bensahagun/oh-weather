@@ -17,7 +17,7 @@ export class WeatherAPI extends RESTDataSource {
 
   async withCoords(lat, lon) {
     const data = await this.get("weather", { lat, lon });
-    return data;
+    return { ...data, weather: data.weather[0] };
   }
 
   async withCity(city) {
