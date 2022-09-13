@@ -74,7 +74,7 @@ const server = new ApolloServer({
   resolvers,
   dataSources: () => ({ weatherAPI: new WeatherAPI() }),
   introspection: true,
-  playground: false,
+  playground: true,
 });
 
 exports.handler = server.createHandler();

@@ -33,7 +33,6 @@ const resolvers: IResolvers = {
   Query: {
     async weatherByCity(_, { city }, { dataSources }) {
       const weather = await dataSources.weatherAPI.withCity(city);
-
       return { ...weather, temp: Math.floor(weather.main.temp), country: weather.sys.country };
     },
     async weatherByCoords(_, { lat, lon }, { dataSources }) {
