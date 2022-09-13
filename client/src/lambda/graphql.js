@@ -1,8 +1,8 @@
-import { RESTDataSource } from 'apollo-datasource-rest';
-const { ApolloServer, gql } = require('apollo-server-lambda');
+import { RESTDataSource } from "apollo-datasource-rest";
+const { ApolloServer, gql } = require("apollo-server-lambda");
 
-const ACCESS_KEY = '259d2c48833cbd2615be7c5978f8ac8c';
-const API_URL = 'https://api.openweathermap.org/data/2.5/';
+const ACCESS_KEY = process.env.OPENWEATHER_API_KEY;
+const API_URL = "https://api.openweathermap.org/data/2.5/";
 
 export class WeatherAPI extends RESTDataSource {
   constructor() {
@@ -11,17 +11,17 @@ export class WeatherAPI extends RESTDataSource {
   }
 
   willSendRequest(request) {
-    request.params.set('appid', ACCESS_KEY);
-    request.params.set('units', 'metric');
+    request.params.set("appid", ACCESS_KEY);
+    request.params.set("units", "metric");
   }
 
   async withCoords(lat, lon) {
-    const data = await this.get('weather', { lat: lon });
+    const data = await this.get("weather", { lat: lon });
     return data;
   }
 
   async withCity(city) {
-    const data = await this.get('weather', { q: city });
+    const data = await this.get("weather", { q: city });
     return { ...data, weather: data.weather[0] };
   }
 }
@@ -62,8 +62,9 @@ const resolvers = {
 
       return { ...weather, temp: Math.floor(weather.main.temp), country: weather.sys.country };
     },
-    weatherByCoords(_, { lat, lon }, { dataSources }) {
-      return dataSources.weatherAPI.withCoords(lat, lon);
+    async weatherByCoords(_, { lat, lon }, { dataSources }) {
+      const weather = await dataSources.weatherAPI.withCoords(lat, lon);
+      return { ...weather, temp: Math.floor(weather.main.temp), country: weather.sys.country };
     },
   },
 };
@@ -73,7 +74,7 @@ const server = new ApolloServer({
   resolvers,
   dataSources: () => ({ weatherAPI: new WeatherAPI() }),
   introspection: true,
-  playground: true,
+  playground: false,
 });
 
 exports.handler = server.createHandler();
