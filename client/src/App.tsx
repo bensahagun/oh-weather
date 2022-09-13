@@ -34,7 +34,7 @@ const App = () => {
   useEffect(() => {
     if (!latitude || !longitude) return;
     getWeatherByCoords({ variables: { lat: latitude, lon: longitude } });
-  }, [latitude, longitude]);
+  }, [latitude, longitude, getWeatherByCoords]);
 
   const handleFormSubmit = useCallback(
     (input: string) => {

@@ -1,4 +1,4 @@
-import { gql, IResolvers, makeExecutableSchema } from 'apollo-server';
+import { gql, IResolvers, makeExecutableSchema } from "apollo-server";
 
 const typeDefs = gql`
   type Coordinates {
@@ -36,8 +36,9 @@ const resolvers: IResolvers = {
 
       return { ...weather, temp: Math.floor(weather.main.temp), country: weather.sys.country };
     },
-    weatherByCoords(_, { lat, lon }, { dataSources }) {
-      return dataSources.weatherAPI.withCoords(lat, lon);
+    async weatherByCoords(_, { lat, lon }, { dataSources }) {
+      const weather = await dataSources.weatherAPI.withCoords(lat, lon);
+      return { ...weather, temp: Math.floor(weather.main.temp), country: weather.sys.country };
     },
   },
 };
