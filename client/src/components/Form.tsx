@@ -1,31 +1,40 @@
-import React, { useState } from 'react';
-import { Input, InputGroup, InputRightElement, InputLeftElement } from '@chakra-ui/input';
-import { FormControl } from '@chakra-ui/form-control';
-import { MdGpsFixed } from 'react-icons/md';
-import { RiSearchEyeLine } from 'react-icons/ri';
+import React, { useState } from "react";
+import { Input, InputGroup, InputRightElement, InputLeftElement } from "@chakra-ui/input";
+import { FormControl } from "@chakra-ui/form-control";
+import { MdGpsFixed } from "react-icons/md";
+import { RiSearchEyeLine } from "react-icons/ri";
 
 interface IForm {
-  setQuery: React.Dispatch<React.SetStateAction<string>>;
+  handleFormSubmit: (input: string) => void;
+  handleGPSClick: () => void;
+  gpsMode: boolean;
 }
 
-const Form = ({ setQuery }: IForm): React.ReactElement => {
-  const [input, setInput] = useState('');
+const Form = ({ handleFormSubmit, handleGPSClick, gpsMode }: IForm) => {
+  const [input, setInput] = useState("");
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    e.key === 'Enter' && input.length > 4 && setQuery(input);
+    e.key === "Enter" && input.length > 4 && handleFormSubmit(input);
   };
 
   const handleClick = () => {
-    input.length > 4 && setQuery(input);
+    input.length > 4 && handleFormSubmit(input);
   };
 
   return (
     <FormControl>
       <InputGroup>
-        <InputLeftElement fontSize='1.2em' cursor='pointer' height='100%' children={<MdGpsFixed />} />
+        <InputLeftElement
+          onClick={handleGPSClick}
+          fontSize='1.2em'
+          cursor='pointer'
+          height='100%'
+          children={<MdGpsFixed />}
+          background={gpsMode ? "whiteAlpha.500" : "none"}
+        />
         <Input
           data-testid='searchInput'
-          _placeholder={{ color: 'whiteAlpha.500' }}
+          _placeholder={{ color: "whiteAlpha.500" }}
           backgroundColor='blackAlpha.600'
           placeholder='Type a city and press Enter'
           variant='outline'

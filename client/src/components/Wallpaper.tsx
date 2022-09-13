@@ -1,22 +1,21 @@
-import React, { useEffect } from 'react';
-import { Flex, Box } from '@chakra-ui/react';
-import _ from 'lodash';
-import { IWeather } from './Weather';
+import React, { useEffect } from "react";
+import { Flex, Box } from "@chakra-ui/react";
+import { WeatherType } from "./Weather";
 
-interface IWallpaper {
-  weather: IWeather;
+type Props = {
+  weather: WeatherType | undefined;
   wallpaper?: string;
-  children?: React.ReactChild | React.ReactChild[];
-}
+  children?: React.ReactNode;
+};
 
 const getWallpaperURL = (filename: string) => {
   return `/images/${filename?.toLowerCase()}.jpg`;
 };
 
-const Wallpaper = ({ weather, children }: IWallpaper): React.ReactElement => {
+const Wallpaper = ({ weather, children }: Props): React.ReactElement => {
   //preload images
   useEffect(() => {
-    ['clear', 'clouds', 'drizzle', 'fog', 'rain', 'snow', 'mist', 'smoke', 'haze'].forEach((i) => {
+    ["clear", "clouds", "drizzle", "fog", "rain", "snow", "mist", "smoke", "haze"].forEach((i) => {
       const img = new Image();
       img.src = getWallpaperURL(i);
     });
@@ -25,10 +24,11 @@ const Wallpaper = ({ weather, children }: IWallpaper): React.ReactElement => {
   return (
     <Box
       data-testid='wallpaper'
-      backgroundImage={!_.isEmpty(weather) ? getWallpaperURL(weather.weather.main) : `/images/default.jpg`}
+      backgroundImage={weather ? getWallpaperURL(weather.weather.main) : `/images/default.jpg`}
       backgroundSize='cover'
       backgroundPosition='center'
-      transition='background-image 0.3s linear'>
+      transition='background-image 0.3s linear'
+    >
       <Flex height='100vh' alignItems='center' justifyContent='center'>
         {children}
       </Flex>

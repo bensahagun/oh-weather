@@ -1,59 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { Center, ChakraProvider, Container, Collapse, Heading } from '@chakra-ui/react';
-import { useLazyQuery, gql } from '@apollo/client';
-import _ from 'lodash';
-import theme from './theme';
-import '@fontsource/raleway';
-import '@fontsource/raleway/500.css';
-import '@fontsource/raleway/600.css';
-import '@fontsource/raleway/800.css';
-import '@fontsource/raleway/900.css';
-import Emoji from './components/Emoji';
-import Form from './components/Form';
-import Weather from './components/Weather';
-import Wallpaper from './components/Wallpaper';
-import { IWeather } from './components/Weather';
-import Badge from './components/Badge';
+import "@fontsource/raleway";
+import "@fontsource/raleway/500.css";
+import "@fontsource/raleway/600.css";
+import "@fontsource/raleway/800.css";
+import "@fontsource/raleway/900.css";
 
-interface IWeatherResponse {
-  weatherByCity: IWeather;
-}
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-export const GET_WEATHER = gql`
-  query ($city: String!) {
-    weatherByCity(city: $city) {
-      name
-      weather {
-        main
-        description
-      }
-      temp
-      country
-    }
-  }
-`;
+import { useLazyQuery } from "@apollo/client";
+import { Center, ChakraProvider, Collapse, Container, Heading } from "@chakra-ui/react";
 
-const App = (): React.ReactElement => {
-  const [query, setQuery] = useState<string>('');
-  const [weather, setWeather] = useState<IWeather>({} as IWeather);
-  const [getWeather, { loading, data }] = useLazyQuery<IWeatherResponse>(GET_WEATHER);
+import Badge from "./components/Badge";
+import Emoji from "./components/Emoji";
+import Form from "./components/Form";
+import Wallpaper from "./components/Wallpaper";
+import Weather, { WeatherType } from "./components/Weather";
+import { GET_WEATHER, GET_WEATHER_BY_COORDS } from "./grapqhl/schema";
+import theme from "./theme";
+import { useGeolocation } from "react-use";
+
+type WeatherResponse = {
+  weatherByCity?: WeatherType;
+  weatherByCoords?: WeatherType;
+};
+
+const App = () => {
+  const [getWeather, { loading, data }] = useLazyQuery<WeatherResponse, { city: string }>(GET_WEATHER);
+  const [getWeatherByCoords, { data: data2 }] = useLazyQuery<WeatherResponse, { lat: number; lon: number }>(
+    GET_WEATHER_BY_COORDS
+  );
+  const [gpsMode, setGpsMode] = useState(false);
+  const { latitude, longitude } = useGeolocation();
 
   useEffect(() => {
-    if (query) {
-      getWeather({
-        variables: {
-          city: query,
-        },
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+    if (!latitude || !longitude) return;
+    getWeatherByCoords({ variables: { lat: latitude, lon: longitude } });
+  }, [latitude, longitude]);
 
-  useEffect(() => {
-    if (data) {
-      setWeather(data.weatherByCity);
-    }
-  }, [data]);
+  const handleFormSubmit = useCallback(
+    (input: string) => {
+      getWeather({ variables: { city: input } });
+    },
+    [getWeather]
+  );
+
+  const handleGPSClick = () => setGpsMode(!gpsMode);
+
+  const weather = useMemo(() => {
+    return (gpsMode ? data2?.weatherByCoords : data?.weatherByCity) as WeatherType;
+  }, [data, data2, gpsMode]);
 
   return (
     <ChakraProvider theme={theme}>
@@ -63,14 +57,15 @@ const App = (): React.ReactElement => {
             <Heading
               data-testid='pageTitle'
               fontWeight='800'
-              fontSize={{ base: '4xl', md: '6xl' }}
-              textShadow='4px 4px 2px rgba(0, 0, 0, 0.5);'>
-              Oh! Weather <Emoji weather={weather} />
+              fontSize={{ base: "4xl", md: "6xl" }}
+              textShadow='4px 4px 2px rgba(0, 0, 0, 0.5);'
+            >
+              Oh! Weather <Emoji name={weather ? weather.weather.main : "rainbow"} />
             </Heading>
           </Center>
-          <Form setQuery={setQuery} />
-          <Collapse data-testid='weather' in={!_.isEmpty(weather) && !loading}>
-            {!_.isEmpty(weather) && <Weather weather={weather} />}
+          <Form handleFormSubmit={handleFormSubmit} handleGPSClick={handleGPSClick} gpsMode={gpsMode} />
+          <Collapse data-testid='weather' in={!loading}>
+            {weather && <Weather weather={weather} />}
           </Collapse>
           <Badge />
         </Container>
